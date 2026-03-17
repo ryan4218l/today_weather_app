@@ -27,11 +27,10 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
     });
   }, []);
 
-  const handleSearchWeather = (index) =>{
+  const handleSearchWeather = (index) => {
     const selectedHistory = searchHistory[index];
     setSearchDetails({ city: selectedHistory.city, country: selectedHistory.country });
-
-  }
+  };
 
   const handleDeleteWeather = (index) => {
     setSearchHistory((prevHistory) => {
@@ -39,8 +38,7 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
       sessionStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
       return updatedHistory;
     });
-
-  }
+  };
 
   return (
     <Box
@@ -50,10 +48,11 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
         width: "100%",
         background: "rgba(255, 255, 255, 0.15)",
         borderRadius: "16px",
+        overflow: "auto",
       }}>
       <Box sx={{ padding: "20px", color: "black" }}> Search History</Box>
       {searchHistory.length > 0 ? (
-        <Box sx={{ padding: "20px", maxHeight: "100%", overflow: "auto" }}>
+        <Box sx={{ padding: "20px" }}>
           {searchHistory.map((item, index) => (
             <Box
               key={index}
@@ -75,7 +74,7 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
               <Stack direction="row" spacing={2} alignItems="center">
                 <Box>{new Date(item.dateTime).toLocaleString()}</Box>
                 <Tooltip title="Search" placement="top">
-                  <IconButton sx={{ backgroundColor: "white" }} onClick={()=>handleSearchWeather(index)}>
+                  <IconButton sx={{ backgroundColor: "white" }} onClick={() => handleSearchWeather(index)}>
                     <SearchIcon />
                   </IconButton>
                 </Tooltip>

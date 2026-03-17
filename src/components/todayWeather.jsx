@@ -46,31 +46,54 @@ const TodayWeather = ({ weather, weatherError }) => {
 
   return (
     <>
-      <Box sx={{ fontSize: "18px", color: "black", fontWeight: "bold", marginBottom: "12px" }}>Today's Weather</Box>
-
+      <Box sx={{ fontSize: "1rem", color: "black", fontWeight: "bold", marginBottom: "12px" }}>Today's Weather</Box>
       {currentWeather.temperature === null ? (
         <Box sx={{ height: "230px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           {weatherError === null ? <Alert severity="info">Please Enter a City and Country to get the current weather</Alert> : <Alert severity="error">{weatherError}</Alert>}
         </Box>
       ) : (
         <Box sx={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+          {/* Weather Icon */}
           <Box
             component="img"
-            src={`https://openweathermap.org/img/wn/${currentWeather.icon}@2x.png`}
+            src={`https://openweathermap.org/img/wn/${currentWeather.icon}@4x.png`}
             alt={currentWeather.condition}
-            sx={{ position: "absolute", top: -40, right: -20, width: { xs: "auto", sm: "200px", md: "320px" }, height: "auto", zIndex: -1 }}
+            sx={{ position: "absolute", top: -60, right: -30, width: { xs: "7.5rem", sm: "11rem", md: "16rem" }, height: "auto", opacity: 0.9, zIndex: -1 }}
           />
-          <Box sx={{ color: "black", fontWeight: "bold" }}>
+
+          {/* City & Country */}
+          <Box sx={{ fontSize: "1.125rem", fontWeight: 600, letterSpacing: "0.5px", zIndex: 1 }}>
             {currentWeather.city}, {currentWeather.country}
           </Box>
-          <Box sx={{ fontSize: "7rem", fontWeight: "bold" }}>{currentWeather.temperature}°</Box>
-          <Box sx={{ display: "flex", gap: "10px" }}>
-            <Box sx={{ fontSize: "14px", color: "grey" }}>H: {currentWeather.highTemperature}°C</Box>
-            <Box sx={{ fontSize: "14px", color: "grey" }}>L: {currentWeather.lowTemperature}°C</Box>
+
+          {/* Temperature */}
+          <Box
+            sx={{
+              fontSize: { xs: "3.5rem", md: "5.5rem" },
+              fontWeight: 700,
+              lineHeight: 1,
+              background: "linear-gradient(135deg, #6a5acd, #a855f7)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              zIndex: 1,
+            }}>
+            {currentWeather.temperature}°
           </Box>
-          <Box sx={{}}>{currentWeather.condition}</Box>
-          <Box sx={{}}>{currentWeather.humidity}% Humidity</Box>
-          <Box sx={{ fontSize: "14px", color: "grey" }}>{new Date(currentWeather.dateTime).toLocaleString()}</Box>
+
+          {/* Condition */}
+          <Box sx={{ fontSize: "1rem", opacity: 0.8, textTransform: "capitalize", zIndex: 1 }}>{currentWeather.condition}</Box>
+
+          {/* High / Low */}
+          <Box sx={{ display: "flex", gap: "1rem", marginTop: "8px", zIndex: 1 }}>
+            <Box sx={{ fontSize: "0.875rem", opacity: 0.7 }}>H: {currentWeather.highTemperature}°C</Box>
+            <Box sx={{ fontSize: "0.875rem", opacity: 0.7 }}>L: {currentWeather.lowTemperature}°C</Box>
+          </Box>
+
+          {/* Extra Info */}
+          <Box sx={{ fontSize: "0.875rem", opacity: 0.75, zIndex: 1 }}>💧 {currentWeather.humidity}% Humidity</Box>
+
+          {/* Date */}
+          <Box sx={{ fontSize: "0.875rem", opacity: 0.6, marginTop: "6px", zIndex: 1 }}>{new Date(currentWeather.dateTime).toLocaleString()}</Box>
         </Box>
       )}
     </>
