@@ -1,70 +1,135 @@
-# Getting Started with Create React App
+#  Weather App (React + MUI + Glassmorphism)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern weather application built with **React** and **Material UI**, featuring a sleek **glassmorphism UI**, **light/dark mode**, and persistent **search history**.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+**Current Weather Display**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  * Temperature, Description, humidity, high/low
+  * Dynamic weather icons
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**Search Functionality**
 
-### `npm test`
+  * Search by city and country
+  * Instant UI updates
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Search History**
 
-### `npm run build`
+  * Stores the last 10 searches
+  * Quick re-search
+  * Delete individual entries
+  * Persisted using `sessionStorage`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Light / Dark Mode**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  * Fully theme-aware UI
+  * Smooth visual consistency across components
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Glassmorphism UI**
 
-### `npm run eject`
+  * Frosted glass containers
+  * Blur effects + transparency
+  * Subtle shadows and depth
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**Custom Scrollbar**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  * Styled per theme
+  * Clean, minimal, and modern
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+##  Tech Stack
 
-## Learn More
+* **React**
+* **Material UI (MUI)**
+* **JavaScript (ES6+)**
+* **OpenWeather API**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Project Structure
 
-### Code Splitting
+```
+src/
+│── assets/
+│── components/
+│   ├── SearchTextBox.jsx
+│   ├── SearchHistory.jsx
+│   ├── TodayWeather.jsx
+│
+│── theme.jsx
+│── constant.jsx
+│── App.jsx
+│── index.js
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Getting Started
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 1. Clone the repo
 
-### Making a Progressive Web App
+```bash
+git clone https://github.com/ryan4218l/today_weather_app.git
+cd today_weather_app
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+### 2. Install dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+npm install
+```
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 3. Add API Key
 
-### `npm run build` fails to minify
+Create a `.env` file: (example file: .env.example)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```env
+REACT_APP_WEATHER_API_KEY=your_api_key_here
+```
+
+---
+
+### 4. Run the app
+
+```bash
+npm start
+```
+
+---
+
+## ⚙️ Key Implementations
+
+### Glassmorphism
+
+* Uses `backdrop-filter: blur()`
+* Transparent layered backgrounds
+* Theme-based opacity tuning
+
+---
+
+### Theme Switching
+
+* Uses MUI `createTheme`
+* Dynamically switches between light/dark mode
+* All components consume theme via `sx`
+
+---
+
+## Acknowledgements
+
+* OpenWeather API for weather data
+* Material UI for UI components
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
