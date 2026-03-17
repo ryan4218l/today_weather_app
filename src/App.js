@@ -1,10 +1,82 @@
 import bgLight from "./assets/bg-light.png";
 import bgDark from "./assets/bg-dark.png";
+import cloud from "./assets/cloud.png";
+import TodayWeather from "./components/todayWeather";
 
 import { Box, IconButton, Stack, TextField, Tooltip } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useState } from "react";
+import SearchHistory from "./components/searchHistory";
+import SearchTextBox from "./components/searchTextBox";
+import { API_KEY, GEOCODING_API_URL, WEATHER_API_URL } from "./constant";
 
 function App() {
+  const isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const [searchDetails, setSearchDetails] = useState({
+    city: "",
+    country: "",
+  });
+
+  const handleSearchWeather = async () => {
+    const { city, country } = searchDetails;
+
+    if (!city || !country) {
+      console.log("Please enter city and country");
+      return;
+    }
+
+    try {
+      // Geocoding API (get lat & lon)
+      const geoResponse = await fetch(`${GEOCODING_API_URL}?q=${city},${country}&limit=1&appid=${API_KEY}`);
+
+      const geoData = await geoResponse.json();
+
+      if (!geoData.length) {
+        throw new Error("Invalid city or country");
+      }
+
+      const { lat, lon } = geoData[0];
+
+      // Weather API (using lat & lon)
+      const weatherResponse = await fetch(`${WEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+
+      const weatherData = await weatherResponse.json();
+
+      // set current weather data
+      setWeather({
+        city: weatherData.name,
+        country: weatherData.sys.country,
+        temperature: Math.round(weatherData.main.temp),
+        highTemperature: Math.round(weatherData.main.temp_max),
+        lowTemperature: Math.round(weatherData.main.temp_min),
+        condition: weatherData.weather[0].main,
+        description: weatherData.weather[0].description,
+        humidity: weatherData.main.humidity,
+        dateTime: new Date(), //  current date time
+        icon: weatherData.weather[0].icon,
+      });
+    } catch (error) {
+      setWeatherError(error.message);
+    }
+  };
+
+  const [weather, setWeather] = useState({
+    city: "",
+    country: "",
+    temperature: null,
+    highTemperature: null,
+    lowTemperature: null,
+    condition: "",
+    description: "",
+    humidity: null,
+    dateTime: null,
+    icon: null,
+  });
+
+  const [weatherError, setWeatherError] = useState(null);
+
   return (
     <Box
       sx={{
@@ -19,67 +91,11 @@ function App() {
         alignItems: "center",
         gap: "20px",
       }}>
-      <Stack direction="row" spacing={2} sx={{ width: "50%" }}>
-        <Box
-          sx={{
-            height: "50px",
-            width: "50%",
-            background: "rgba(255, 255, 255, 0.18)",
-            borderRadius: "16px",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-            backdropFilter: "blur(5px)",
-            WebkitBackdropFilter: "blur(5px)",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "relative",
-          }}>
-          <Box sx={{ position: "absolute", top: 4, left: 20, fontSize: "12px", color: "grey" }}>Country</Box>
-          <TextField
-            variant="outlined"
-            sx={{
-              height: "100%",
-              width: "100%",
-              background: "none",
-              borderRadius: "16px",
-              border: "none",
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
-            }}
-          />
-        </Box>
-        <Box
-          sx={{
-            height: "50px",
-            width: "50%",
-            background: "rgba(255, 255, 255, 0.18)",
-            borderRadius: "16px",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-            backdropFilter: "blur(5px)",
-            WebkitBackdropFilter: "blur(5px)",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "relative",
-          }}>
-          <Box sx={{ position: "absolute", top: 4, left: 20, fontSize: "12px", color: "grey" }}>City</Box>
-          <TextField
-            variant="outlined"
-            sx={{
-              height: "100%",
-              width: "100%",
-              background: "none",
-              borderRadius: "16px",
-              border: "none",
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
-            }}
-          />
-        </Box>
+      <Stack direction={"row"} spacing={2} sx={{ width: { xs: "60%", sm: "55%", md: "50%" }, alignItems: "flex-end" }}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ width: "100%" }}>
+          <SearchTextBox title="City" setSearchText={(city) => setSearchDetails({ ...searchDetails, city })} />
+          <SearchTextBox title="Country" setSearchText={(country) => setSearchDetails({ ...searchDetails, country })} />
+        </Stack>
         <Box
           sx={{
             height: "50px",
@@ -91,7 +107,7 @@ function App() {
             alignItems: "center",
           }}>
           <Tooltip title="Search" placement="top">
-            <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }}>
+            <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }} onClick={handleSearchWeather}>
               <SearchIcon />
             </IconButton>
           </Tooltip>
@@ -99,7 +115,7 @@ function App() {
       </Stack>
       <Box
         sx={{
-          height: "80%",
+          height: "60%",
           width: "50%",
           background: "rgba(255, 255, 255, 0.18)",
           borderRadius: "16px",
@@ -107,8 +123,12 @@ function App() {
           backdropFilter: "blur(5px)",
           WebkitBackdropFilter: "blur(5px)",
           border: "1px solid rgba(255, 255, 255, 0.3)",
+          padding: { xs: "20px", md: "30px" },
+          display: "flex",
+          flexDirection: "column",
         }}>
-        Today's Weather
+        <TodayWeather weather={weather} weatherError={weatherError} />
+        <SearchHistory weather={weather} />
       </Box>
     </Box>
   );

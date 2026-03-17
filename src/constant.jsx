@@ -1,4 +1,5 @@
-export const base_url = "http://98.70.40.39:5001";
+export const GEOCODING_API_URL = "http://api.openweathermap.org/geo/1.0/direct";
+export const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 export const API_KEY = "5211a61f5f133e8c37f8669fb35c7ff6";
 
