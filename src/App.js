@@ -1,15 +1,15 @@
 import bgLight from "./assets/bg-light.png";
 import bgDark from "./assets/bg-dark.png";
-import cloud from "./assets/cloud.png";
 import TodayWeather from "./components/todayWeather";
 
 import { Box, IconButton, Stack, TextField, Tooltip } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchHistory from "./components/searchHistory";
 import SearchTextBox from "./components/searchTextBox";
-import { API_KEY, GEOCODING_API_URL, WEATHER_API_URL } from "./constant";
+import { GEOCODING_API_URL, WEATHER_API_URL } from "./constant";
+
+const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
 
 function App() {
   const isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -19,11 +19,11 @@ function App() {
     country: "",
   });
 
-  const handleSearchWeather = async () => {
-    const { city, country } = searchDetails;
+  const handleSearchWeather = async (data = searchDetails) => {
+    const { city, country } = data;
 
     if (!city || !country) {
-      console.log("Please enter city and country");
+      // console.log("Please enter city and country");
       return;
     }
 
@@ -57,7 +57,9 @@ function App() {
         dateTime: new Date(), //  current date time
         icon: weatherData.weather[0].icon,
       });
+      setSearchDetails({ city: "", country: "" });
     } catch (error) {
+      setSearchDetails({ city: "", country: "" });
       setWeatherError(error.message);
     }
   };
@@ -93,8 +95,8 @@ function App() {
       }}>
       <Stack direction={"row"} spacing={2} sx={{ width: { xs: "60%", sm: "55%", md: "50%" }, alignItems: "flex-end" }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ width: "100%" }}>
-          <SearchTextBox title="City" setSearchText={(city) => setSearchDetails({ ...searchDetails, city })} />
-          <SearchTextBox title="Country" setSearchText={(country) => setSearchDetails({ ...searchDetails, country })} />
+          <SearchTextBox title="City" value={searchDetails.city} setSearchText={(city) => setSearchDetails({ ...searchDetails, city })} />
+          <SearchTextBox title="Country" value={searchDetails.country} setSearchText={(country) => setSearchDetails({ ...searchDetails, country })} />
         </Stack>
         <Box
           sx={{
@@ -107,7 +109,7 @@ function App() {
             alignItems: "center",
           }}>
           <Tooltip title="Search" placement="top">
-            <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }} onClick={handleSearchWeather}>
+            <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }} onClick={() => handleSearchWeather(searchDetails)}>
               <SearchIcon />
             </IconButton>
           </Tooltip>
@@ -128,7 +130,12 @@ function App() {
           flexDirection: "column",
         }}>
         <TodayWeather weather={weather} weatherError={weatherError} />
-        <SearchHistory weather={weather} />
+        <SearchHistory
+          weather={weather}
+          setSearchDetails={(data) => {
+            handleSearchWeather(data);
+          }}
+        />
       </Box>
     </Box>
   );

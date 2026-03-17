@@ -4,9 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Stack, IconButton, Tooltip } from "@mui/material";
 
-import cloud from "../assets/cloud.png";
-
-const SearchHistory = ({ weather }) => {
+const SearchHistory = ({ weather, setSearchDetails }) => {
   const { city, country, temperature, highTemperature, lowTemperature, condition, description, humidity, dateTime, icon } = weather;
 
   const [searchHistory, setSearchHistory] = useState([]);
@@ -28,6 +26,21 @@ const SearchHistory = ({ weather }) => {
       return storedHistory ? JSON.parse(storedHistory) : prevHistory;
     });
   }, []);
+
+  const handleSearchWeather = (index) =>{
+    const selectedHistory = searchHistory[index];
+    setSearchDetails({ city: selectedHistory.city, country: selectedHistory.country });
+
+  }
+
+  const handleDeleteWeather = (index) => {
+    setSearchHistory((prevHistory) => {
+      const updatedHistory = prevHistory.filter((_, i) => i !== index);
+      sessionStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
+      return updatedHistory;
+    });
+
+  }
 
   return (
     <Box
@@ -62,12 +75,12 @@ const SearchHistory = ({ weather }) => {
               <Stack direction="row" spacing={2} alignItems="center">
                 <Box>{new Date(item.dateTime).toLocaleString()}</Box>
                 <Tooltip title="Search" placement="top">
-                  <IconButton sx={{ backgroundColor: "white" }}>
+                  <IconButton sx={{ backgroundColor: "white" }} onClick={()=>handleSearchWeather(index)}>
                     <SearchIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete" placement="top">
-                  <IconButton sx={{ backgroundColor: "white" }}>
+                  <IconButton sx={{ backgroundColor: "white" }} onClick={() => handleDeleteWeather(index)}>
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>

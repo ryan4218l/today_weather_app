@@ -1,8 +1,6 @@
 import { Box, TextField } from "@mui/material";
-import React, { useState } from "react";
 
-const SearchTextBox = ({ title, setSearchText }) => {
-  const [localSearchText, setLocalSearchText] = useState("");
+const SearchTextBox = ({ title, value, setSearchText }) => {
 
   return (
     <Box
@@ -23,9 +21,8 @@ const SearchTextBox = ({ title, setSearchText }) => {
       <Box sx={{ position: "absolute", top: 4, left: 20, fontSize: "12px", color: "grey" }}>{title}</Box>
       <TextField
         variant="outlined"
-        value={localSearchText}
+        value={value}
         onChange={(e) => {
-          setLocalSearchText(e.target.value);
           if (setSearchText) {
             setSearchText(e.target.value);
           }

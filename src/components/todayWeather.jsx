@@ -21,11 +21,27 @@ const TodayWeather = ({ weather, weatherError }) => {
   ]);
 
   useEffect(() => {
+    setCurrentWeather({
+      city: city,
+      country: country,
+      temperature: temperature,
+      highTemperature: highTemperature,
+      lowTemperature: lowTemperature,
+      condition: condition,
+      description: description,
+      humidity: humidity,
+      dateTime: dateTime,
+      icon: icon,
+    });
+  }, [weather]);
+
+  useEffect(() => {
+    // if (currentWeather.temperature === null) {
     setCurrentWeather((prevHistory) => {
       const storedHistory = sessionStorage.getItem("searchHistory");
-      console.log("storedHistory ", JSON.parse(storedHistory));
       return storedHistory ? JSON.parse(storedHistory)[0] : prevHistory;
     });
+    // }
   }, []);
 
   return (
