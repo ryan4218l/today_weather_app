@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { Alert, Box } from "@mui/material";
 
@@ -31,7 +31,15 @@ const TodayWeather = ({ weather, weatherError }) => {
 
   return (
     <>
-      <Box sx={{ fontSize: "1rem", color: "black", fontWeight: "bold", marginBottom: "0.75rem" }}>Today's Weather</Box>
+      <Box
+        sx={(theme) => ({
+          fontSize: "1rem",
+          fontWeight: "bold",
+          marginBottom: "0.75rem",
+          color: theme.palette.mode === "light" ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.9)",
+        })}>
+        Today's Weather
+      </Box>
       {!hasWeather ? (
         <Box
           sx={{
@@ -69,15 +77,15 @@ const TodayWeather = ({ weather, weatherError }) => {
 
           {/* Temperature */}
           <Box
-            sx={{
+            sx={(theme) => ({
               fontSize: { xs: "3.5rem", md: "5.5rem" },
               fontWeight: 700,
               lineHeight: 1,
-              background: "linear-gradient(135deg, #6a5acd, #a855f7)",
+              background: theme.palette.mode === "light" ? "linear-gradient(135deg, #6a5acd, #a855f7)" : "linear-gradient(135deg, #c084fc, #7c3aed)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               zIndex: 1,
-            }}>
+            })}>
             {currentWeather.temperature ?? "--"}°
           </Box>
 

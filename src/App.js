@@ -1,8 +1,10 @@
-import { useState } from "react";
-
-import { Box, IconButton, Stack } from "@mui/material";
+import React, { useMemo, useState, useEffect } from "react";
+import { Box, IconButton, Stack, ThemeProvider, CssBaseline } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
+import { getTheme } from "./theme";
 import bgLight from "./assets/bg-light.png";
 import bgDark from "./assets/bg-dark.png";
 import TodayWeather from "./components/todayWeather";
@@ -13,7 +15,24 @@ import { GEOCODING_API_URL, WEATHER_API_URL } from "./constant";
 const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
 
 function App() {
-  const isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const getInitialMode = () => {
+    const savedMode = localStorage.getItem("themeMode");
+    if (savedMode) return savedMode;
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
+  const [mode, setMode] = useState(getInitialMode);
+
+  useEffect(() => {
+    localStorage.setItem("themeMode", mode);
+  }, [mode]);
+
+  const theme = useMemo(() => getTheme(mode), [mode]);
+
+  const toggleTheme = () => {
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
+  };
 
   const [searchDetails, setSearchDetails] = useState({
     city: "",
@@ -81,62 +100,90 @@ function App() {
   const [weatherError, setWeatherError] = useState(null);
 
   return (
-    <Box
-      sx={{
-        backgroundImage: `url(${bgLight})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "20px",
-      }}>
-      <Stack direction={"row"} spacing={2} sx={{ width: { xs: "70%", lg: "50%" }, alignItems: "flex-end" }}>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }}>
-          <SearchTextBox title="City" value={searchDetails.city} setSearchText={(city) => setSearchDetails({ ...searchDetails, city })} />
-          <SearchTextBox title="Country" value={searchDetails.country} setSearchText={(country) => setSearchDetails({ ...searchDetails, country })} />
-        </Stack>
-        <Box
-          sx={{
-            height: "50px",
-            background: "rgba(165, 55,253, 1)",
-            borderRadius: "16px",
-            border: "1px solid rgba(165, 55,253, 1)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}>
-          <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }} onClick={() => handleSearchWeather(searchDetails)}>
-            <SearchIcon />
-          </IconButton>
-        </Box>
-      </Stack>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Box
         sx={{
-          height: "60%",
-          width: { xs: "70%", lg: "50%" },
-          background: "rgba(255, 255, 255, 0.18)",
-          borderRadius: "16px",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          backdropFilter: "blur(5px)",
-          WebkitBackdropFilter: "blur(5px)",
-          border: "1px solid rgba(255, 255, 255, 0.3)",
-          padding: { xs: "20px", md: "30px" },
+          backgroundImage: (theme) => `url(${theme.palette.mode === "light" ? bgLight : bgDark})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100vh",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
+          position: "relative",
         }}>
-        <TodayWeather weather={weather} weatherError={weatherError} />
-        <SearchHistory
-          weather={weather}
-          setSearchDetails={(data) => {
-            handleSearchWeather(data);
-          }}
-        />
+        <IconButton
+          onClick={toggleTheme}
+          sx={{
+            position: "absolute",
+            bottom: 15,
+            right: 15,
+            background: "rgba(255,255,255,0.2)",
+            backdropFilter: "blur(10px)",
+          }}>
+          {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+        </IconButton>
+        <Stack direction={"row"} spacing={2} sx={{ width: { xs: "70%", lg: "50%" }, alignItems: "flex-end" }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }}>
+            <SearchTextBox title="City" value={searchDetails.city} setSearchText={(city) => setSearchDetails({ ...searchDetails, city })} />
+            <SearchTextBox title="Country" value={searchDetails.country} setSearchText={(country) => setSearchDetails({ ...searchDetails, country })} />
+          </Stack>
+          <Box
+            sx={(theme) => ({
+              height: "3.125rem",
+              borderRadius: "1rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              background: theme.palette.mode === "light" ? "linear-gradient(135deg, #7c3aed, #c084fc)" : "linear-gradient(135deg, #6a5acd, #a855f7)",
+              transition: "all 0.25s ease",
+            })}>
+            <IconButton
+              aria-label="Search"
+              onClick={() => handleSearchWeather(searchDetails)}
+              sx={(theme) => ({
+                color: "#fff",
+                borderRadius: "1rem",
+                height: "3.125rem",
+                width: "3.125rem",
+
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  backgroundColor: "transparent",
+                },
+
+                "&:active": {
+                  transform: "scale(0.95)",
+                },
+              })}>
+              <SearchIcon />
+            </IconButton>
+          </Box>
+        </Stack>
+        <Box
+          sx={(theme) => ({
+            ...theme.custom.glass(theme),
+            height: "fit-content",
+            width: { xs: "70%", lg: "50%" },
+            borderRadius: "2rem",
+            padding: { xs: "20px", md: "30px" },
+            display: "flex",
+            flexDirection: "column",
+          })}>
+          <TodayWeather weather={weather} weatherError={weatherError} />
+          <SearchHistory
+            weather={weather}
+            setSearchDetails={(data) => {
+              handleSearchWeather(data);
+            }}
+          />
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 }
 
