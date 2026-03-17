@@ -85,7 +85,7 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
               </Box>
 
               {/* Actions */}
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <Stack direction={"row"} spacing={1}>
                 <Tooltip title="Search" placement="top">
                   <IconButton
                     size="small"

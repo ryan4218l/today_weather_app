@@ -93,8 +93,8 @@ function App() {
         alignItems: "center",
         gap: "20px",
       }}>
-      <Stack direction={"row"} spacing={2} sx={{ width: { xs: "60%", sm: "55%", md: "50%" }, alignItems: "flex-end" }}>
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ width: "100%" }}>
+      <Stack direction={"row"} spacing={2} sx={{ width: { xs: "70%", lg: "50%" }, alignItems: "flex-end" }}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }}>
           <SearchTextBox title="City" value={searchDetails.city} setSearchText={(city) => setSearchDetails({ ...searchDetails, city })} />
           <SearchTextBox title="Country" value={searchDetails.country} setSearchText={(country) => setSearchDetails({ ...searchDetails, country })} />
         </Stack>
@@ -118,7 +118,7 @@ function App() {
       <Box
         sx={{
           height: "60%",
-          width: "50%",
+          width: { xs: "70%", lg: "50%" },
           background: "rgba(255, 255, 255, 0.18)",
           borderRadius: "16px",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
