@@ -1,44 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Stack, IconButton, Tooltip } from "@mui/material";
 
-const SearchHistory = ({ weather, setSearchDetails }) => {
-  const { city, country, temperature, highTemperature, lowTemperature, condition, description, humidity, dateTime, icon } = weather;
+const STORAGE_KEY = "searchHistory";
 
+const SearchHistory = ({ weather, setSearchDetails }) => {
   const [searchHistory, setSearchHistory] = useState([]);
 
   useEffect(() => {
-    if (city === "" || country === "") return;
+    try {
+      const stored = sessionStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setSearchHistory(JSON.parse(stored));
+      }
+    } catch {
+      console.error("Failed to parse search history");
+    }
+  }, []);
 
-    setSearchHistory((prevHistory) => {
-      const newEntry = { city, country, temperature, highTemperature, lowTemperature, condition, humidity, dateTime, icon };
-      const updatedHistory = [newEntry, ...prevHistory];
-      sessionStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
-      return updatedHistory;
+  useEffect(() => {
+    if (!weather?.city || !weather?.country) return;
+
+    setSearchHistory((prev) => {
+      const updated = [weather, ...prev].slice(0, 10);
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
     });
   }, [weather]);
 
-  useEffect(() => {
-    setSearchHistory((prevHistory) => {
-      const storedHistory = sessionStorage.getItem("searchHistory");
-      return storedHistory ? JSON.parse(storedHistory) : prevHistory;
+  const handleSearchWeather = useCallback(
+    (index) => {
+      const item = searchHistory[index];
+      setSearchDetails({ city: item.city, country: item.country });
+    },
+    [setSearchDetails, searchHistory],
+  );
+
+  const handleDeleteWeather = useCallback((index) => {
+    setSearchHistory((prev) => {
+      const updated = prev.filter((_, i) => i !== index);
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
     });
   }, []);
-
-  const handleSearchWeather = (index) => {
-    const selectedHistory = searchHistory[index];
-    setSearchDetails({ city: selectedHistory.city, country: selectedHistory.country });
-  };
-
-  const handleDeleteWeather = (index) => {
-    setSearchHistory((prevHistory) => {
-      const updatedHistory = prevHistory.filter((_, i) => i !== index);
-      sessionStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
-      return updatedHistory;
-    });
-  };
 
   return (
     <Box
@@ -52,7 +58,9 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
         backdropFilter: "blur(0.5rem)",
       }}>
       <Box sx={{ padding: "1rem", fontWeight: 600 }}>Search History</Box>
-      {searchHistory.length > 0 ? (
+      {searchHistory.length === 0 ? (
+        <Box sx={{ padding: "20px", color: "grey" }}>No search history available.</Box>
+      ) : (
         <Box sx={{ px: "0.75rem", pb: "0.75rem" }}>
           {searchHistory.map((item, index) => (
             <Box
@@ -67,7 +75,7 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
                 justifyContent: "space-between",
                 gap: "0.5rem",
               }}>
-              {/* LEFT: Info */}
+              {/* Info */}
               <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "start", sm: "center" } }}>
                 <Box sx={{ fontSize: "0.9rem", fontWeight: 500 }}>
                   {item.city}, {item.country}
@@ -76,33 +84,35 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
                 <Box sx={{ fontSize: "0.7rem", opacity: 0.7 }}>{new Date(item.dateTime).toLocaleString()}</Box>
               </Box>
 
-              {/* RIGHT: Actions */}
+              {/* Actions */}
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-                <IconButton
-                  size="small"
-                  sx={{
-                    background: "rgba(255,255,255,0.8)",
-                    "&:hover": { background: "white" },
-                  }}
-                  onClick={() => handleSearchWeather(index)}>
-                  <SearchIcon fontSize="small" />
-                </IconButton>
+                <Tooltip title="Search" placement="top">
+                  <IconButton
+                    size="small"
+                    sx={{
+                      background: "rgba(255,255,255,0.8)",
+                      "&:hover": { background: "white" },
+                    }}
+                    onClick={() => handleSearchWeather(index)}>
+                    <SearchIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
 
-                <IconButton
-                  size="small"
-                  sx={{
-                    background: "rgba(255,255,255,0.8)",
-                    "&:hover": { background: "white" },
-                  }}
-                  onClick={() => handleDeleteWeather(index)}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
+                <Tooltip title="Delete" placement="top">
+                  <IconButton
+                    size="small"
+                    sx={{
+                      background: "rgba(255,255,255,0.8)",
+                      "&:hover": { background: "white" },
+                    }}
+                    onClick={() => handleDeleteWeather(index)}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </Stack>
             </Box>
           ))}
         </Box>
-      ) : (
-        <Box sx={{ padding: "20px", color: "grey" }}>No search history available.</Box>
       )}
     </Box>
   );
