@@ -1,10 +1,11 @@
+import { useState } from "react";
+
+import { Box, IconButton, Stack } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+
 import bgLight from "./assets/bg-light.png";
 import bgDark from "./assets/bg-dark.png";
 import TodayWeather from "./components/todayWeather";
-
-import { Box, IconButton, Stack, TextField, Tooltip } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useState } from "react";
 import SearchHistory from "./components/searchHistory";
 import SearchTextBox from "./components/searchTextBox";
 import { GEOCODING_API_URL, WEATHER_API_URL } from "./constant";
@@ -108,11 +109,9 @@ function App() {
             justifyContent: "center",
             alignItems: "center",
           }}>
-          <Tooltip title="Search" placement="top">
-            <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }} onClick={() => handleSearchWeather(searchDetails)}>
-              <SearchIcon />
-            </IconButton>
-          </Tooltip>
+          <IconButton aria-label="search" sx={{ color: "white", borderRadius: "16px", height: "60px" }} onClick={() => handleSearchWeather(searchDetails)}>
+            <SearchIcon />
+          </IconButton>
         </Box>
       </Stack>
       <Box

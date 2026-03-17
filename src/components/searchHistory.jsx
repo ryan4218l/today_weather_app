@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Stack, IconButton, Tooltip } from "@mui/material";
+import { Box, Stack, IconButton } from "@mui/material";
 
 const STORAGE_KEY = "searchHistory";
 
@@ -86,8 +86,8 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
 
               {/* Actions */}
               <Stack direction={"row"} spacing={1}>
-                <Tooltip title="Search" placement="top">
                   <IconButton
+                    aria-label="search"
                     size="small"
                     sx={{
                       background: "rgba(255,255,255,0.8)",
@@ -96,10 +96,9 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
                     onClick={() => handleSearchWeather(index)}>
                     <SearchIcon fontSize="small" />
                   </IconButton>
-                </Tooltip>
 
-                <Tooltip title="Delete" placement="top">
                   <IconButton
+                    aria-label="Delete"
                     size="small"
                     sx={{
                       background: "rgba(255,255,255,0.8)",
@@ -108,7 +107,6 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
                     onClick={() => handleDeleteWeather(index)}>
                     <DeleteIcon fontSize="small" />
                   </IconButton>
-                </Tooltip>
               </Stack>
             </Box>
           ))}
