@@ -43,46 +43,60 @@ const SearchHistory = ({ weather, setSearchDetails }) => {
   return (
     <Box
       sx={{
-        marginTop: "20px",
+        marginTop: "1rem",
         flex: 1,
         width: "100%",
         background: "rgba(255, 255, 255, 0.15)",
-        borderRadius: "16px",
+        borderRadius: "1rem",
         overflow: "auto",
+        backdropFilter: "blur(0.5rem)",
       }}>
-      <Box sx={{ padding: "20px", color: "black" }}> Search History</Box>
+      <Box sx={{ padding: "1rem", fontWeight: 600 }}>Search History</Box>
       {searchHistory.length > 0 ? (
-        <Box sx={{ padding: "20px" }}>
+        <Box sx={{ px: "0.75rem", pb: "0.75rem" }}>
           {searchHistory.map((item, index) => (
             <Box
               key={index}
               sx={{
-                marginBottom: "10px",
-                padding: "20px",
-                background: "rgba(255, 255, 255, 0.3)",
-                borderRadius: "16px",
-                maxHeight: "200px",
-                overflowY: "auto",
+                mb: "0.5rem",
+                p: "0.75rem",
+                background: "rgba(255,255,255,0.25)",
+                borderRadius: "0.75rem",
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
                 alignItems: "center",
+                justifyContent: "space-between",
+                gap: "0.5rem",
               }}>
-              <Box>
-                {item.city}, {item.country}
+              {/* LEFT: Info */}
+              <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { xs: "start", sm: "center" } }}>
+                <Box sx={{ fontSize: "0.9rem", fontWeight: 500 }}>
+                  {item.city}, {item.country}
+                </Box>
+
+                <Box sx={{ fontSize: "0.7rem", opacity: 0.7 }}>{new Date(item.dateTime).toLocaleString()}</Box>
               </Box>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box>{new Date(item.dateTime).toLocaleString()}</Box>
-                <Tooltip title="Search" placement="top">
-                  <IconButton sx={{ backgroundColor: "white" }} onClick={() => handleSearchWeather(index)}>
-                    <SearchIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete" placement="top">
-                  <IconButton sx={{ backgroundColor: "white" }} onClick={() => handleDeleteWeather(index)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
+
+              {/* RIGHT: Actions */}
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                <IconButton
+                  size="small"
+                  sx={{
+                    background: "rgba(255,255,255,0.8)",
+                    "&:hover": { background: "white" },
+                  }}
+                  onClick={() => handleSearchWeather(index)}>
+                  <SearchIcon fontSize="small" />
+                </IconButton>
+
+                <IconButton
+                  size="small"
+                  sx={{
+                    background: "rgba(255,255,255,0.8)",
+                    "&:hover": { background: "white" },
+                  }}
+                  onClick={() => handleDeleteWeather(index)}>
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
               </Stack>
             </Box>
           ))}
